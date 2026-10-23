@@ -11,9 +11,7 @@
 ```
 
 4. Na célula de seleção de backends, escolher `RUN_TUCANO = True` e manter as outras duas flags `False`.
-5. Executar as células por ordem. O modelo é descarregado da Hugging Face no primeiro uso. **Pré-carregar antes da aula.**
-
-Não há token de API comercial. Para pesos disponíveis publicamente, em geral não é necessário token Hugging Face.
+5. Executar as células por ordem. O modelo é descarregado da Hugging Face no primeiro uso. 
 
 ## Computador local: Ollama com Clinical-BR
 
@@ -40,14 +38,13 @@ O projeto AMALIA recomenda **A100 40 GB** no caso da execução completa via vLL
 ```python
 %pip install -qU bitsandbytes
 ```
-
 Requer GPU CUDA e capacidade suficiente para carregar e executar o modelo. **Não ativar AMALIA simultaneamente** com modelos grandes no mesmo ambiente. Não usar a configuração 4-bit como afirmação de qualidade equivalente à inferência BF16.
 
 Documentação: <https://amalia-llm.github.io/intro.html>
 
 ## Que testes são realizados?
 
-O notebook mostra os dois exercícios ligados:
+O notebook mostra:
 
 1. Beta-Binomial e risco posterior sob dados sintéticos;
 2. LangChain LCEL para Hugging Face ou Ollama;
@@ -60,6 +57,3 @@ O notebook mostra os dois exercícios ligados:
 
 **Métricas didáticas:** validade de JSON, confiança na evidência textual, decisão/abstenção, tempo de execução e robustez pt-BR/pt-PT. O modelo não calcula o risco numericamente: quem o faz é a parte probabilística, sob premissas explícitas. As frases de avaliação não constituem um benchmark estatístico nem comprovam superioridade de qualquer checkpoint.
 
-## Limitações de verificação
-
-Na elaboração foi possível executar integralmente o notebook **sem LLMs**, incluindo os testes do contrato e das decisões. Não havia binário Ollama nem GPU disponível, e as dependências LangChain/Transformers não puderam ser instaladas pela ausência de rede no ambiente de execução. Assim, os caminhos de inferência real **precisam ser testados no computador/Colab de destino**.
