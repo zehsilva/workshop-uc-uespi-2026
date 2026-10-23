@@ -65,7 +65,7 @@
 \title[IA e decisão]{Da IA generativa à decisão sob incerteza}
 \subtitle{Bayes, LangChain e modelos de linguagem locais}
 \author[E. de Souza da Silva]{Eliezer de Souza da Silva}
-\institute[DEI / CISUC]{Departamento de Engenharia Informática\\Universidade de Coimbra -- CISUC\\ \url{https://sereliezer.github.io/} \\ \url{eliezer.silva@uc.pt}}
+\institute[DEI / CISUC]{Departamento de Engenharia Informática\\Universidade de Coimbra -- CISUC\\ \url{https://sereliezer.github.io/} \\ \url{eliezer.silva@uc.pt} \\ \url{https://github.com/zehsilva/workshop-uc-uespi-2026}}
 \date{23 de outubro de 2026 · Coimbra}
 
 \begin{document}
@@ -92,20 +92,6 @@
 \end{frame}
 
 %3
-\begin{frame}{Motivação}
-\begin{columns}[T]
-\column{.55\textwidth}
-{\large\bfseries Observação oficial recente}\par\vspace{.15cm}
-{\fontsize{18}{22}\selectfont\color{danger}\bfseries 6\% $\to$ 25\%}\par
-Área com \textbf{seca grave} entre agosto e setembro de 2026.
-\column{.42\textwidth}
-\boxhead{Desafio de engenharia}{\begin{itemize}\item Redes de água com sensores e falhas.\item Escassez de inspeções e atenção.\item Informação de campo em linguagem natural.\item Decisão sob custo, risco e incerteza.\end{itemize}}
-\end{columns}
-\vspace{0.22cm}
-{\small\color{danger}\bfseries Importante:} o cenário de bombas e todos os números seguintes são \textbf{sintéticos}, não resultados de medições no Piauí.
-\smallsource{ANA / Monitor de Secas, atualização publicada em 19.10.2026 (referência no final).}
-\end{frame}
-
 %4
 \begin{frame}{CISUC: um ecossistema}
 \vspace{.08cm}
@@ -176,9 +162,24 @@
 \end{columns}
 \end{frame}
 
+
+\begin{frame}{Motivação}
+\begin{columns}[T]
+\column{.55\textwidth}
+{\large\bfseries Observação oficial recente}\par\vspace{.15cm}
+{\fontsize{18}{22}\selectfont\color{danger}\bfseries 6\% $\to$ 25\%}\par
+Área com \textbf{seca grave} entre agosto e setembro de 2026.
+\column{.42\textwidth}
+\boxhead{Desafio de engenharia}{\begin{itemize}\item Redes de água com sensores e falhas.\item Escassez de inspeções e atenção.\item Informação de campo em linguagem natural.\item Decisão sob custo, risco e incerteza.\end{itemize}}
+\end{columns}
+\vspace{0.22cm}
+{\small\color{danger}\bfseries Importante:} o cenário de bombas e todos os números seguintes são \textbf{sintéticos}, não resultados de medições no Piauí.
+\smallsource{ANA / Monitor de Secas, atualização publicada em 19.10.2026 (referência no final).}
+\end{frame}
+
+
 % ============================================================
-% FRAME 1 — Inserir após "Por que este exemplo faz sentido
-% para o Piauí?"
+% FRAME 1 — 
 % ============================================================
 
 \begin{frame}{Do problema real à inteligência artificial}
@@ -233,7 +234,7 @@ $\;\longrightarrow\;$
 
 
 % ============================================================
-% FRAME 2 — Inserir antes do Exemplo A (modelo Bayesiano)
+% FRAME 2 — Exemplo A (modelo Bayesiano)
 % ============================================================
 
 \begin{frame}[allowframebreaks]{Probabilidade e decisão: duas perguntas diferentes}
@@ -291,7 +292,7 @@ uma perda de R\$1.000 caso exista uma falha.
 
 
 % ============================================================
-% FRAME 3 — Inserir antes da arquitetura do Exemplo B
+% FRAME 3 — arquitetura do Exemplo B
 % ============================================================
 
 \begin{frame}[allowframebreaks]{Intuição: o que é um agente baseado em LLM?}
@@ -382,7 +383,7 @@ regras explícitas e mecanismos de supervisão humana.
 
 
 % ============================================================
-% FRAME 4 — Inserir antes das integrações com Ollama/Hugging Face
+% FRAME 4 — integrações com Ollama/Hugging Face
 % ============================================================
 
 \begin{frame}[fragile]{LangChain: como construímos esse sistema?}

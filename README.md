@@ -1,6 +1,6 @@
 # Imersão UESPI: apresentação 
 
-`UESPI_IA_Classico_LangChain_2026.tex`tem o conteudo técnico da apresentação sobre Bayes, LangChain e modelos locais e utiliza um design Beamer tradicional (`Madrid`, branco e azul), sem capa escura ou caixas decorativas.
+`UESPI_IA_Classico_LangChain_2026.tex`tem o conteudo técnico da apresentação sobre Bayes, LangChain e modelos locais e utiliza um design Beamer tradicional (`Madrid`, branco e azul).
 
 ## Compilar
 
