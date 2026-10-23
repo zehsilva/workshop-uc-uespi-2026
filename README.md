@@ -6,7 +6,6 @@
 
 ```bash
 xelatex UESPI_IA_Classico_LangChain_2026.tex
-xelatex UESPI_IA_Classico_LangChain_2026.tex
 ```
 
 É necessário manter a pasta `assets/` ao lado do `.tex`. O notebook é o `UESPI_Workshop_Bayes_LangChain_Modelos_Locais_2026.ipynb`.
