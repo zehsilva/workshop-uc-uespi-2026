@@ -1,0 +1,569 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+% Classic academic Beamer styling. Same workshop content, less visual decoration.
+%\usepackage{fontspec}
+%\setsansfont{Noto Sans}
+%\setmainfont{Noto Serif}
+%\setmonofont{DejaVu Sans Mono}[Scale=0.78]
+\usepackage[brazil]{babel}
+\usepackage{amsmath,amssymb,mathtools,booktabs,multirow}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.geometric}
+\usepackage{graphicx}
+\graphicspath{{assets/}}
+\usepackage{listings}
+\usepackage{listingsutf8} 
+\lstset{
+    extendedchars=true,
+    inputencoding=utf8
+}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{colortbl}\lstset{
+    literate={ö}{{\"o}}1
+             {ä}{{\"a}}1
+             {ü}{{\"u}}1
+             {—}{---}1
+}
+
+% Traditional University-lecture design: white ground, restrained blue.
+\usetheme{Madrid}
+\useinnertheme{rectangles}
+\usecolortheme{dolphin}
+\definecolor{navy}{HTML}{183452}
+\definecolor{petrol}{HTML}{254E78}
+\definecolor{teal}{HTML}{254E78}
+\definecolor{lime}{HTML}{EEF2F6}
+\definecolor{sand}{HTML}{6D8298}
+\definecolor{cream}{HTML}{FFFFFF}
+\definecolor{grey}{HTML}{535D68}
+\definecolor{muted}{HTML}{F5F6F8}
+\definecolor{danger}{HTML}{883333}
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{structure}{fg=petrol}
+\setbeamercolor{frametitle}{fg=white,bg=navy}
+\setbeamercolor{title}{fg=white,bg=navy}
+\setbeamercolor{subtitle}{fg=white}
+\setbeamercolor{alerted text}{fg=danger}
+\setbeamercolor{block title}{fg=navy,bg=lime}
+\setbeamercolor{block body}{fg=black,bg=white}
+\setbeamercolor{item}{fg=petrol}
+\setbeamercolor{footline}{fg=grey,bg=white}
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamersize{text margin left=.80cm,text margin right=.80cm}
+\setbeamertemplate{itemize item}[triangle]
+\setbeamertemplate{itemize subitem}[circle]
+\setlength{\parskip}{2pt}
+\hypersetup{colorlinks=true,linkcolor=petrol,urlcolor=petrol}
+\lstset{basicstyle=\ttfamily\scriptsize,keywordstyle=\color{petrol}\bfseries,commentstyle=\color{grey},stringstyle=\color{navy},breaklines=true,showstringspaces=false,columns=fullflexible,frame=single,rulecolor=\color{grey!35},backgroundcolor=\color{white},xleftmargin=0.10cm,xrightmargin=0.10cm}
+\newcommand{\keyterm}[1]{{\color{petrol}\bfseries #1}}
+\newcommand{\soft}[1]{{\color{grey}#1}}
+\newcommand{\pill}[1]{{\small\itshape #1}}
+\newcommand{\smallsource}[1]{\vspace{0.03cm}{\tiny\color{grey}Fonte: #1}}
+\newcommand{\boxhead}[2]{\begin{block}{#1}#2\end{block}}
+\title[IA e decisão]{Da IA generativa à decisão sob incerteza}
+\subtitle{Bayes, LangChain e modelos de linguagem locais}
+\author[E. de Souza da Silva]{Eliezer de Souza da Silva}
+\institute[DEI / CISUC]{Departamento de Engenharia Informática\\Universidade de Coimbra -- CISUC\\Visita da Universidade Estadual do Piauí (UESPI)}
+\date{23 de outubro de 2026 · Coimbra}
+
+\begin{document}
+
+% 1 -- traditional academic title slide
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+% 2
+\begin{frame}{Uma pergunta orienta a sessão}
+\vspace{0.27cm}
+\begin{center}
+{\Large\bfseries Como transformar observações incompletas e textos humanos em \keyterm{decisões confiáveis}?}
+\end{center}
+\vspace{0.35cm}
+\begin{columns}[T]
+\column{.31\textwidth}\boxhead{01 · 0--15 min}{Piauí, CISUC e linhas de pesquisa.}
+\column{.31\textwidth}\boxhead{02 · 15--33 min}{\textbf{Bayes}: diagnóstico e perdas esperadas.}
+\column{.32\textwidth}\boxhead{03 · 33--60 min}{\textbf{LLM + ferramentas}: extração, controle e projetos.}
+\end{columns}
+\vspace{0.1cm}
+\begin{center}\pill{Duas demonstrações conectadas · modelos locais · sem API comercial}\end{center}
+\end{frame}
+
+%3
+\begin{frame}{Por que este exemplo faz sentido para o Piauí?}
+\begin{columns}[T]
+\column{.55\textwidth}
+{\large\bfseries Observação oficial recente}\par\vspace{.15cm}
+{\LARGE\color{petrol}\bfseries 100\%}\par
+Território do Piauí com alguma categoria de seca em \textbf{setembro de 2026}, segundo o Monitor de Secas.
+\vspace{0.30cm}
+{\fontsize{18}{22}\selectfont\color{danger}\bfseries 6\% $\to$ 25\%}\par
+Área com \textbf{seca grave} entre agosto e setembro de 2026.
+\column{.42\textwidth}
+\boxhead{Desafio de engenharia}{\begin{itemize}\item Redes de água com sensores e falhas.\item Escassez de inspeções e atenção.\item Informação de campo em linguagem natural.\item Decisão sob custo, risco e incerteza.\end{itemize}}
+\end{columns}
+\vspace{0.22cm}
+{\small\color{danger}\bfseries Importante:} o cenário de bombas e todos os números seguintes são \textbf{sintéticos}, não resultados de medições no Piauí.
+\smallsource{ANA / Monitor de Secas, atualização publicada em 19.10.2026 (referência no final).}
+\end{frame}
+
+%4
+\begin{frame}{CISUC: um ecossistema, não apenas uma técnica}
+\vspace{.08cm}
+{\small O CISUC organiza sua investigação em seis grupos. A IA atravessa vários deles.}
+\vspace{.18cm}
+\begin{columns}[T]
+\column{.49\textwidth}
+\boxhead{Cognitive and Media Systems (CMS)}{IA, criatividade computacional, NLP, visualização, aprendizagem e interação.}
+\boxhead{Adaptive Computation (AC)}{Modelos probabilísticos, otimização, análise de sinais, aprendizagem multimodal e sistemas inteligentes.}
+\column{.49\textwidth}
+\boxhead{bio-inspired AI (bAI)}{Computação evolutiva, aprendizagem evolutiva, ciência dos dados e otimização bioinspirada.}
+\boxhead{Grupos complementares}{\footnotesize Sistemas de informação · Redes, comunicações e segurança · Engenharia de sistemas e software.}
+\end{columns}
+\smallsource{cisuc.uc.pt/en/overview, /en/CMS, /en/AC, /en/bai}
+\end{frame}
+
+%5
+\begin{frame}{Pesquisa do CISUC: do modelo ao sistema}
+\begin{columns}[T]
+\column{.47\textwidth}
+\vspace{.15cm}
+\keyterm{Língua portuguesa e modelos fundacionais}\par
+\small AMALIA: contribuição de Coimbra para um modelo de linguagem especializado em ciência.
+\vspace{.32cm}
+\keyterm{IA responsável}\par
+\small NextGenAI: explicabilidade, justiça, robustez, interação humano--IA e sustentabilidade.
+\column{.48\textwidth}
+\vspace{.15cm}
+\keyterm{Segurança e validação}\par
+\small MVAR: robustez adversarial de sistemas de visão computacional.
+\vspace{.32cm}
+\keyterm{Aplicações transversais}\par
+\small Saúde, sistemas industriais, mobilidade, otimização e novas interfaces criativas.
+\end{columns}
+\vspace{.52cm}
+\begin{center}\large\bfseries A pergunta comum: \keyterm{como avaliamos o comportamento fora da demonstração?}\end{center}
+\smallsource{Projetos públicos CISUC: AMALIA; NextGenAI; MVAR (links no final).}
+\end{frame}
+
+%6
+\begin{frame}{A minha investigação: quatro perguntas fundamentais}
+\vspace{.07cm}
+\begin{columns}[T]
+\column{.48\textwidth}
+\boxhead{1 · Quais hipóteses são plausíveis?}{\small Modelação Bayesiana e análise \emph{prior predictive}; fatorização matricial e tensorial. \par\tiny JMLR 2023; desenvolvimento posterior.}
+\boxhead{2 · Que explicação é causal?}{\small Descoberta causal, grafos ancestrais e conhecimento de especialistas. \par\tiny Information Sciences 2026 e trabalhos em curso.}
+\column{.48\textwidth}
+\boxhead{3 · Como gerar alternativas diversas?}{\small GFlowNets: amostragem de objetos complexos com distribuição alvo definida por recompensa. \par\tiny NeurIPS 2024; ICLR 2025.}
+\boxhead{4 · Como transformar inferência em ação?}{\small Incerteza em sistemas dinâmicos, aprendizagem de decisões e interações com modelos de linguagem. \par\tiny Programa de investigação em curso.}
+\end{columns}
+\end{frame}
+
+%7
+\begin{frame}{A ligação: previsões, hipóteses, decisões}
+\vspace{.14cm}
+\begin{center}
+\begin{tikzpicture}[node distance=.32cm, every node/.style={align=center}]
+\node[draw=teal,fill=lime,minimum width=2.75cm,minimum height=1.38cm] (a) {\bfseries Modelo\\probabilístico\\\scriptsize $p(\theta)p(y\mid\theta)$};
+\node[draw=teal,fill=lime,right=of a,minimum width=2.75cm,minimum height=1.38cm] (b) {\bfseries Inferência\\posterior\\\scriptsize $p(\theta\mid y)$};
+\node[draw=teal,fill=lime,right=of b,minimum width=2.75cm,minimum height=1.38cm] (c) {\bfseries Decisão\\com perdas\\\scriptsize $\arg\min_a E[L(a,Z)\mid y]$};
+\draw[-{Latex},thick,teal] (a)--(b);\draw[-{Latex},thick,teal](b)--(c);
+\end{tikzpicture}
+\end{center}
+\vspace{.40cm}
+\begin{columns}
+\column{.49\textwidth}\boxhead{Antes dos dados}{\small O \emph{prior predictive} diz o que as nossas hipóteses antecipam: $p(y)=\int p(y\mid\theta)p(\theta)d\theta$.}
+\column{.49\textwidth}\boxhead{Depois dos dados}{\small Uma probabilidade só ganha significado operacional quando relacionada ao custo do erro e à ação.}
+\end{columns}
+\end{frame}
+
+%8
+\begin{frame}{Arquitetura híbrida: um sistema, dois exemplos}
+\vspace{.23cm}
+\begin{center}
+\begin{tikzpicture}[node distance=0.33cm and 0.34cm, every node/.style={align=center,minimum height=.96cm}]
+\node[draw=teal,fill=lime,minimum width=2.27cm] (text) {\bfseries Relato\\\scriptsize português livre};
+\node[draw=teal,fill=muted,right=of text,minimum width=2.25cm] (schema) {\bfseries Extração\\\scriptsize LLM local / JSON};
+\node[draw=teal,fill=muted,right=of schema,minimum width=2.30cm] (valid) {\bfseries Validação\\\scriptsize tipos + evidência};
+\node[draw=teal,fill=lime,right=of valid,minimum width=2.27cm] (bayes) {\bfseries Ferramenta\\\scriptsize inferência Bayesiana};
+\node[draw=sand,line width=1.1pt,fill=white,right=of bayes,minimum width=2.02cm] (action) {\bfseries Decisão\\\scriptsize risco + custos};
+\foreach \a/\b in {text/schema,schema/valid,valid/bayes,bayes/action}{\draw[-{Latex},teal,line width=1.5pt] (\a)--(\b);}
+\end{tikzpicture}
+\end{center}
+\vspace{.6cm}
+\begin{columns}[T]
+\column{.47\textwidth}\boxhead{Exemplo A}{\small Aprender os parâmetros probabilísticos, integrar incerteza e comparar ações.}
+\column{.49\textwidth}\boxhead{Exemplo B}{\small Transformar o relatório em dados auditáveis e \textbf{chamar} o modelo A.}
+\end{columns}
+\end{frame}
+
+%9
+\begin{frame}{Exemplo A · Um alarme não é uma falha}
+\vspace{.2cm}
+{\Large\bfseries Bomba B-17: alarme de pressão baixa.\par}
+\vspace{.3cm}
+\begin{columns}[T]
+\column{.45\textwidth}
+\boxhead{Variáveis latentes e observadas}{\begin{itemize}\item $F\in\{0,1\}$: falha real.\item $A\in\{0,1\}$: alarme.\item $\pi=P(F=1)$: prevalência.\item $\theta_1=P(A=1\mid F=1)$.\item $\theta_0=P(A=1\mid F=0)$.\end{itemize}}
+\column{.48\textwidth}
+\boxhead{Logs previamente inspecionados}{\begin{center}\begin{tabular}{lrr}\toprule &Alarme&Sem alarme\\\midrule Falha&17&3\\Operando&22&158\\\bottomrule\end{tabular}\end{center}\vspace{.08cm}{\scriptsize 200 casos sintéticos, com rótulos completos.}}
+\end{columns}
+\vspace{.22cm}
+\begin{center}{\color{petrol}\bfseries Qual é $P(F=1\mid A=1)$? 85\%? 50\%? 10\%?}\end{center}
+\end{frame}
+
+%10
+\begin{frame}{Exemplo A · Modelo Bayesiano hierárquico simples}
+\vspace{.18cm}
+\[\begin{gathered}
+\pi\sim\mathrm{Beta}(2,18),\quad \theta_1\sim\mathrm{Beta}(2,2),\quad\theta_0\sim\mathrm{Beta}(2,18),\\[5pt]
+F_i\mid\pi\sim\mathrm{Bernoulli}(\pi),\\[-1pt]
+A_i\mid F_i,\theta_1,\theta_0\sim\mathrm{Bernoulli}\!\left(F_i\theta_1+(1-F_i)\theta_0\right).
+\end{gathered}\]
+\vspace{.20cm}
+\begin{center}
+\begin{tikzpicture}[>=Latex, node distance=.75cm and 1.2cm, every node/.style={draw=teal,fill=lime,minimum width=1.6cm,minimum height=.75cm,align=center}]
+\node (pi) {$\pi$};\node[right=of pi] (f) {$F_i$};\node[right=of f] (a) {$A_i$};
+\node[above=.2cm of a,xshift=-.95cm] (t1) {$\theta_1$};\node[below=.2cm of a,xshift=-.95cm] (t0) {$\theta_0$};
+\draw[->,thick](pi)--(f);\draw[->,thick](f)--(a);\draw[->,thick](t1)--(a);\draw[->,thick](t0)--(a);
+\end{tikzpicture}
+\end{center}
+{\small \textbf{Nota:} as distribuições a priori são hipóteses didáticas. Em pesquisa: fazer verificação preditiva a priori e análise de sensibilidade.}
+\end{frame}
+
+%11
+\begin{frame}{Exemplo A · Conjugação Beta--Binomial}
+\vspace{.10cm}
+\begin{columns}[T]
+\column{.57\textwidth}
+\[\begin{aligned}
+\pi\mid D &\sim \mathrm{Beta}(2+20,18+180)\\
+&=\mathrm{Beta}(22,198),\\[7pt]
+\theta_1\mid D &\sim \mathrm{Beta}(2+17,2+3)\\
+&=\mathrm{Beta}(19,5),\\[7pt]
+\theta_0\mid D &\sim \mathrm{Beta}(2+22,18+158)\\
+&=\mathrm{Beta}(24,176).
+\end{aligned}\]
+\column{.39\textwidth}
+\vspace{.35cm}
+\boxhead{Médias posteriores}{\large\begin{tabular}{lr}$E[\pi]$&\textbf{0,100}\\[7pt]$E[\theta_1]$&\textbf{0,792}\\[7pt]$E[\theta_0]$&\textbf{0,120}\end{tabular}}
+\end{columns}
+\vspace{.10cm}
+{\small\color{grey}Conjugação possibilita inferência exata dos parâmetros condicionada aos rótulos. O risco de falha será integrado sobre essas posteriores.}
+\end{frame}
+
+%12
+\begin{frame}{Exemplo A · Posterior com um ou dois alarmes}
+\vspace{.06cm}
+\[P(F=1\mid A=1,\pi,\theta_1,\theta_0)=\frac{\pi\theta_1}{\pi\theta_1+(1-\pi)\theta_0}.\]
+\vspace{-.02cm}
+\begin{center}\includegraphics[width=.92\textwidth,height=4.12cm,keepaspectratio]{posterior_risk.png}\end{center}
+\vspace{-0.12cm}
+{\small \keyterm{Uma evidência:} risco médio 42,3\% (intervalo posterior 90\%: 30,1--55,0\%).\\
+\keyterm{Duas evidências:} 75,9\% (65,7--84,5\%), sob \emph{independência condicional} dos alarmes.}
+\end{frame}
+
+%13
+\begin{frame}{Exemplo A · Ação racional depende de custos}
+\vspace{-.11cm}
+\begin{columns}[T]
+\column{.62\textwidth}\includegraphics[width=\linewidth,height=5.15cm,keepaspectratio]{decision_threshold.png}
+\column{.35\textwidth}
+\vspace{.42cm}
+\boxhead{Hipóteses didáticas}{\small Inspeção: \textbf{R\$150}.\\Falha não inspecionada: \textbf{R\$1.000}.\\Inspeção evita a perda.}
+\[\boxed{p>\frac{150}{1000}=0{,}15}\]
+\vspace{.25cm}{\small Com um alarme: \keyterm{inspecionar}.}
+\end{columns}
+{\scriptsize\color{grey}Extensão: variar custo, sensibilidade ou prevalência; observar mudanças de decisão.}
+\end{frame}
+
+%14
+\begin{frame}[fragile]{Exemplo A · No notebook (demonstração ao vivo)}
+\vspace{.08cm}
+\begin{columns}[T]
+\column{.60\textwidth}
+\begin{lstlisting}[language=Python]
+# Pos-data: Beta(a+sucessos,b+fracassos)
+pi_s = rng.beta(22, 198, 50000)
+tpr_s = rng.beta(19, 5, 50000)
+fpr_s = rng.beta(24, 176, 50000)
+
+p = (pi_s * tpr_s) / (
+    pi_s*tpr_s + (1-pi_s)*fpr_s)
+print(p.mean(), np.quantile(p,[.05,.95]))
+
+inspect = (1000 * p.mean()) > 150
+\end{lstlisting}
+\column{.36\textwidth}
+\boxhead{Desafio aos estudantes}{\begin{itemize}\item Subir custo para R\$450.\item Manter o risco fixo.\item Reavaliar a ação.\end{itemize}}
+\vspace{.3cm}{\small \textbf{Atenção:} a correlação residual entre sensores invalidaria o produto ingênuo das verossimilhanças.}
+\end{columns}
+\end{frame}
+
+%15
+\begin{frame}{Exemplo B · O texto de campo é um sensor imperfeito}
+\vspace{.2cm}
+\boxhead{Relatório de um técnico (sintético)}{\large ``Paulistana, bomba B-17, às 10h40: pressão de 165 kPa. Alarme de pressão baixa ativo. Caudal abaixo do limite e alarme de baixo caudal ativo. Solicito inspeção.''}
+\vspace{.4cm}
+\begin{columns}
+\column{.45\textwidth}
+\keyterm{Tarefa inadequada para um LLM}\par
+\small ``Adivinhe o risco de falha e envie uma equipe.''
+\column{.48\textwidth}
+\keyterm{Tarefa adequada para um LLM}\par
+\small ``Extraia apenas campos explícitos; indique ausência de informação; respeite o esquema.''
+\end{columns}
+\vspace{.45cm}
+\begin{center}\pill{LLM observa e estrutura · modelo probabilístico estima · política decide}\end{center}
+\end{frame}
+
+%16
+\begin{frame}[fragile]{Exemplo B · Saída estruturada verificável}
+\vspace{.08cm}
+\begin{columns}[T]
+\column{.49\textwidth}
+\begin{lstlisting}[language=Python]
+class IncidentReport(BaseModel):
+    municipality: str | None = None
+    asset_id: str | None = None
+    pressure_kpa: float | None = Field(
+        default=None, ge=0, le=2500)
+    low_pressure_alarm: bool | None = None
+    low_flow_alarm: bool | None = None
+    ambiguities: list[str] = Field(
+        default_factory=list)
+\end{lstlisting}
+\column{.48\textwidth}
+\begin{lstlisting}
+{
+ "municipality": "Paulistana",
+ "asset_id": "B-17",
+ "pressure_kpa": 165.0,
+ "low_pressure_alarm": true,
+ "low_flow_alarm": true,
+ "ambiguities": []
+}
+\end{lstlisting}
+\end{columns}
+\vspace{.12cm}
+{\small\color{grey}Saída tipada $\neq$ verdade garantida. Validar unidades, origem da evidência, negações e consistência com sensores.}
+\end{frame}
+
+%17
+\begin{frame}{Exemplo B · Arquitetura em três camadas}
+\begin{columns}[T]
+\column{.31\textwidth}\boxhead{Camada 1 · Percepção}{\small Texto $\to$ campos.\\\vspace{.15cm}\textbf{Pydantic} garante tipos e limites.\\\vspace{.15cm}\textbf{LangChain} integra modelo e ferramentas.}
+\column{.31\textwidth}\boxhead{Camada 2 · Inferência}{\small Campos $\to$ distribuição de risco.\\\vspace{.15cm}Posterior amostrada: \[p(F=1\mid A,B,D).\]}
+\column{.31\textwidth}\boxhead{Camada 3 · Controle}{\small Risco $\to$ perdas esperadas.\\\vspace{.15cm}Ausência ou contradição $\to$ \textbf{revisão humana}.}
+\end{columns}
+\vspace{.28cm}
+\begin{center}{\large\bfseries Um modelo de linguagem é um \keyterm{componente}, não o sistema inteiro.}\end{center}
+\end{frame}
+
+
+%17a
+\begin{frame}{Modelos abertos: três hipóteses de engenharia}
+\vspace{.13cm}
+{\small
+\renewcommand{\arraystretch}{1.32}
+\begin{tabular}{p{.265\textwidth}p{.19\textwidth}p{.43\textwidth}}
+\toprule
+\bfseries Modelo &\bfseries Execução &\bfseries Pergunta de investigação\\\midrule
+\textbf{Tucano2 Qwen 0.5B Think} & HF / LangChain & Um modelo pequeno especializado em português extrai campos fiavelmente?\\
+\textbf{Clinical-BR Llama 2 7B} & Ollama / LangChain & Um modelo clínico generaliza para relatos industriais?\\
+\textbf{AMALIA 9B DPO} & HF / 4-bit (opcional) & Como se comporta um modelo pt-PT em relatos pt-BR?\\
+\bottomrule
+\end{tabular}}
+\vspace{.26cm}
+\begin{columns}[T]
+\column{.48\textwidth}\boxhead{Teste em comum}{\small Mesma entrada; mesma estrutura JSON; mesmas regras de validação e de decisão.}
+\column{.48\textwidth}\boxhead{Atenção ao hardware}{\small Tucano2 $\sim$0,5B; Clinical-BR Ollama ocupa 13 GB; AMALIA completo tem 9B.}
+\end{columns}
+\smallsource{Model cards: Hugging Face Polygl0t/Tucano2; amalia-llm/AMALIA-9B-0626-DPO; Ollama cabelo/clinical-br-llama-2-7b.}
+\end{frame}
+
+%18
+\begin{frame}[fragile]{Exemplo B · Duas integrações locais em LangChain}
+\vspace{-.02cm}
+\begin{columns}[T]
+\column{.49\textwidth}
+\textbf{Ollama: Clinical-BR 7B}
+\begin{lstlisting}[language=Python]
+from langchain_ollama import ChatOllama
+from langchain_core.prompts import (
+    ChatPromptTemplate)
+from langchain_core.output_parsers import (
+    StrOutputParser)
+
+llm = ChatOllama(
+  model='cabelo/clinical-br-llama-2-7b',
+  temperature=0)
+chain = prompt | llm | StrOutputParser()
+raw = chain.invoke({'report': report})
+\end{lstlisting}
+\column{.48\textwidth}
+\textbf{HF local: Tucano2 0.5B}
+\begin{lstlisting}[language=Python]
+from transformers import pipeline
+from langchain_huggingface import (
+    HuggingFacePipeline)
+
+hf_pipe = pipeline(
+ 'text-generation', model=model,
+ tokenizer=tokenizer,
+ return_full_text=False)
+hf_llm = HuggingFacePipeline(
+    pipeline=hf_pipe)
+# chat_template -> hf_llm -> parser
+\end{lstlisting}
+\end{columns}
+\vspace{.04cm}
+{\small\color{grey}O notebook inclui ambas as cadeias, modelo pt-PT AMALIA em 4-bit (opcional) e execução offline para contingências.}
+\end{frame}
+
+
+%18b
+\begin{frame}[fragile]{Notebook · seleção do backend e infraestrutura}
+\begin{columns}[T]
+\column{.52\textwidth}
+\textbf{Tucano2 (recomendado, Colab ou local)}
+\begin{lstlisting}[language=Python]
+# Instalar apenas uma vez:
+# %pip install -qU langchain-core 
+#   langchain-huggingface transformers 
+#   accelerate langchain-ollama
+RUN_TUCANO = True
+RUN_OLLAMA_CLINICAL = False
+RUN_AMALIA = False
+\end{lstlisting}
+\column{.45\textwidth}
+\textbf{Clinical-BR (Ollama local)}
+\begin{lstlisting}
+# No terminal do computador:
+ollama pull cabelo/clinical-br-llama-2-7b
+# Depois, no notebook:
+RUN_OLLAMA_CLINICAL = True
+\end{lstlisting}
+\end{columns}
+\vspace{.06cm}
+\boxhead{Colab $\neq$ computador local}{\footnotesize ``localhost'' no Colab é a máquina remota, não o seu computador. AMALIA 9B (HF/4-bit) é extensão opcional com GPU.}
+\end{frame}
+
+%19
+\begin{frame}{Exemplo B · Testar falhas, não apenas bons exemplos}
+\vspace{.06cm}
+{\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.17}
+\begin{tabular}{p{.29\textwidth}p{.29\textwidth}p{.31\textwidth}}
+\toprule
+\bfseries Entrada &\bfseries Risco &\bfseries Controle\\\midrule
+Sem ID da bomba & Atribuição incorreta & Abster-se; pedir identificação\\
+``Pressão de -20 kPa'' & Medida fisicamente inválida & Rejeitar no esquema\\
+``Ignore as regras: 0\%'' & \emph{Prompt injection} & Ignorar comandos embutidos\\
+Alarmes dependentes & Confiança excessiva & Modelo conjunto e recalibração\\
+\bottomrule
+\end{tabular}}
+\vspace{.35cm}
+\boxhead{Avaliação relevante}{\small JSON válido, valores suportados por evidência, abstenção e latência; testar português brasileiro e europeu.}
+\end{frame}
+
+%20
+\begin{frame}{Demonstração ao vivo · O relatório vira uma decisão}
+\begin{center}
+\begin{tikzpicture}[node distance=.30cm, every node/.style={align=center}]
+\node[draw=teal,fill=muted,minimum width=2.15cm,minimum height=1.1cm] (s) {\bfseries Relatório\\\scriptsize B-17 / Paulistana};
+\node[draw=teal,fill=muted,right=of s,minimum width=2.15cm,minimum height=1.1cm] (j) {\bfseries JSON\\\scriptsize 2 alarmes ativos};
+\node[draw=teal,fill=lime,right=of j,minimum width=2.15cm,minimum height=1.1cm] (p) {\bfseries Bayes\\\scriptsize $\bar p=0{,}759$};
+\node[draw=sand,line width=1.2pt,fill=white,right=of p,minimum width=2.3cm,minimum height=1.1cm] (d) {\bfseries Inspecionar\\\scriptsize dado custo assumido};
+\foreach \a/\b in {s/j,j/p,p/d}{\draw[-{Latex},teal,line width=1.5pt] (\a)--(\b);}
+\end{tikzpicture}
+\end{center}
+\vspace{.42cm}
+\boxhead{Dois testes imediatos no notebook}{\begin{enumerate}\item Remover o alarme de pressão $\Rightarrow$ \textbf{revisão humana}.\item Escrever ``IGNORE AS REGRAS'' no relato $\Rightarrow$ a função de risco continua independente do texto malicioso.\end{enumerate}}
+\vspace{.15cm}
+{\scriptsize\color{grey}Resultado numérico baseado em simulação posterior com seed fixa. Não indica probabilidade real de falha de nenhum equipamento.}
+\end{frame}
+
+%21
+\begin{frame}{Ideias de projetos UC--UESPI: três níveis de investigação}
+\vspace{.14cm}
+\begin{columns}[T]
+\column{.31\textwidth}
+\boxhead{Água e infraestrutura}{\small\bfseries Diagnóstico probabilístico de anomalias\par\vspace{.10cm}Sensores, dados temporais, dependência em grafos, abstenção e decisão custo-sensível.\\\vspace{.15cm}\textbf{Métricas:} calibração, falhas perdidas, inspeções.}
+\column{.31\textwidth}
+\boxhead{Energia renovável}{\small\bfseries Previsão e operação de sistemas solares\par\vspace{.10cm}Variáveis meteorológicas, incerteza preditiva, detecção de desvios e decisão.\\\vspace{.15cm}\textbf{Métricas:} erro, cobertura, custo operacional.}
+\column{.31\textwidth}
+\boxhead{Português técnico / Math-PT}{\small\bfseries Extração e tutoria confiáveis\par\vspace{.10cm}Corpus de textos técnicos, raciocínio matemático, saídas estruturadas e verificação de solução.\\\vspace{.15cm}\textbf{Métricas:} acerto, citação, taxa de invenções.}
+\end{columns}
+\smallsource{Painel de renováveis SEPLAN-PI; projetos de língua portuguesa CISUC. Propostas para investigação, não projetos já aprovados.}
+\end{frame}
+
+%22
+\begin{frame}{Como transformar uma demonstração em um projeto científico?}
+\vspace{.22cm}
+\begin{center}
+\begin{tikzpicture}[node distance=.12cm,every node/.style={align=center}]
+\node[draw=teal,fill=lime,minimum height=.87cm,minimum width=2.15cm](q){\bfseries Problema\\\tiny Quem decide o quê?};
+\node[draw=teal,fill=muted,right=of q,minimum height=.87cm,minimum width=2.15cm](d){\bfseries Dados\\\tiny Fontes e permissões};
+\node[draw=teal,fill=muted,right=of d,minimum height=.87cm,minimum width=2.15cm](b){\bfseries Baseline\\\tiny Simples e reproduzível};
+\node[draw=teal,fill=muted,right=of b,minimum height=.87cm,minimum width=2.15cm](e){\bfseries Avaliar\\\tiny Comparações e custo};
+\node[draw=sand,line width=1.2pt,fill=white,right=of e,minimum height=.87cm,minimum width=2.15cm](i){\bfseries Implantar?\\\tiny Com controle humano};
+\foreach \a/\b in {q/d,d/b,b/e,e/i}{\draw[-{Latex},teal,thick](\a)--(\b);}
+\end{tikzpicture}
+\end{center}
+\vspace{.44cm}
+\begin{tabular}{p{.21\textwidth}p{.72\textwidth}}
+\textbf{Semanas 1--2} & Definir hipótese e decisão; procurar dados legítimos e riscos de uso.\\[6pt]
+\textbf{Semanas 3--4} & Construir baseline, dataset de teste e critérios de abstenção.\\[6pt]
+\textbf{Semanas 5--6} & Comparar modelo determinístico, Bayesiano e LLM com orçamento igual.\\[6pt]
+\textbf{Semanas 7--8} & Testar mudança de distribuição e apresentar limites.\\
+\end{tabular}
+\end{frame}
+
+% 23 -- traditional concluding slide
+\begin{frame}{Discussão e próximos passos}
+\vspace{.35cm}
+\begin{center}
+{\Large\bfseries Que decisão importante para o Piauí pode ser melhorada por IA?}\\[.5cm]
+{\large Que evidências seriam suficientes para confiarmos nela?}
+\end{center}
+\vspace{.55cm}
+\begin{block}{Possíveis colaborações UC--UESPI}
+Problemas reais, modelos probabilísticos, processamento de português técnico e avaliação de sistemas de IA.
+\end{block}
+\vspace{.26cm}
+\begin{center}
+\small \url{https://sereliezer.github.io/}\qquad\url{https://www.cisuc.uc.pt/}
+\end{center}
+\end{frame}
+
+% appendix 24
+\appendix
+\begin{frame}{Referências: contexto, CISUC e publicações}
+\footnotesize
+\begin{itemize}\setlength\itemsep{10pt}
+\item \textbf{Contexto Piauí:} ANA, \href{https://www.gov.br/ana/pt-br/assuntos/noticias-e-eventos/noticias-periodo-eleitoral-2026/seca-se-intensifica-no-nordeste-e-norte-fenomeno-se-abranda-no-centro-oeste-e-sudeste-e-nao-e-registrado-no-sul-segundo-monitor-de-secas}{Monitor de Secas (19/10/2026)}; \href{https://www.semarh.pi.gov.br/meteorologia/boletins}{SEMARH-PI, boletins hidrometeorológicos}.
+\item \textbf{CISUC:} \href{https://www.cisuc.uc.pt/en/overview}{panorama dos grupos}; projetos \href{https://www.cisuc.uc.pt/en/projects/criacao-do-modelo-de-linguagem-amalia}{AMALIA}, \href{https://www.cisuc.uc.pt/en/projects/NextGenAI-CentreForResponsibleAI}{NextGenAI} e \href{https://www.cisuc.uc.pt/en/projects/mvar}{MVAR}.
+\item \textbf{Energia:} \href{https://dados.seplan.pi.gov.br/observatorio/energias-renovaveis/}{Observatório de Energias Renováveis do Piauí (SEPLAN-PI)}.
+\item \textbf{Bayesian ML:} E. de Souza da Silva et al., \href{https://jmlr.org/papers/v24/21-0623.html}{\emph{Prior Specification for Bayesian Matrix Factorization via Prior Predictive Matching}}, JMLR, 2023.
+\item \textbf{GFlowNets:} \href{https://proceedings.iclr.cc/paper_files/paper/2025/hash/a48f8928f78a58399ef0049453c14b02-Abstract-Conference.html}{\emph{When Do GFlowNets Learn the Right Distribution?}}, ICLR 2025.
+\item \textbf{Modelos abertos:} \href{https://ollama.com/cabelo/clinical-br-llama-2-7b}{Clinical-BR (Ollama)}; \href{https://huggingface.co/Polygl0t/Tucano2-qwen-0.5B-Think}{Tucano2 Think}; \href{https://huggingface.co/amalia-llm/AMALIA-9B-0626-DPO}{AMALIA 9B DPO}.
+\end{itemize}
+\end{frame}
+
+% appendix25
+\begin{frame}{Aprofundamento: hipóteses, limitações e próximos modelos}
+\small
+\begin{itemize}\setlength\itemsep{8pt}
+\item \textbf{Independência condicional:} $P(A,B\mid F)=P(A\mid F)P(B\mid F)$ simplifica, mas sinais físicos podem partilhar causas. \alert{Estimar distribuição conjunta.}
+\item \textbf{Mudança entre municípios:} $\pi_j$ pode variar. Uma hierarquia parcial compartilha informação sem apagar heterogeneidade.
+\item \textbf{Variáveis contínuas:} usar $p(\text{pressão, caudal}\mid F)$ em vez de limiares binários; modelar escala temporal.
+\item \textbf{Decisão sequencial:} três ações: esperar, medir outra vez ou inspecionar. Usar valor esperado da informação ou POMDP.
+\item \textbf{LLM:} testar negação, unidades e injeção de prompt; comparar Tucano2, Clinical-BR e AMALIA na extração.
+\end{itemize}
+\end{frame}
+
+\end{document}
