@@ -65,7 +65,7 @@
 \title[IA e decisão]{Da IA generativa à decisão sob incerteza}
 \subtitle{Bayes, LangChain e modelos de linguagem locais}
 \author[E. de Souza da Silva]{Eliezer de Souza da Silva}
-\institute[DEI / CISUC]{Departamento de Engenharia Informática\\Universidade de Coimbra -- CISUC\\Visita da Universidade Estadual do Piauí (UESPI)}
+\institute[DEI / CISUC]{Departamento de Engenharia Informática\\Universidade de Coimbra -- CISUC\\ \url{https://sereliezer.github.io/} \\ \url{eliezer.silva@uc.pt}}
 \date{23 de outubro de 2026 · Coimbra}
 
 \begin{document}
@@ -83,22 +83,19 @@
 \end{center}
 \vspace{0.35cm}
 \begin{columns}[T]
-\column{.31\textwidth}\boxhead{01 · 0--15 min}{Piauí, CISUC e linhas de pesquisa.}
+\column{.31\textwidth}\boxhead{01 · 0--15 min}{Intro}
 \column{.31\textwidth}\boxhead{02 · 15--33 min}{\textbf{Bayes}: diagnóstico e perdas esperadas.}
 \column{.32\textwidth}\boxhead{03 · 33--60 min}{\textbf{LLM + ferramentas}: extração, controle e projetos.}
 \end{columns}
 \vspace{0.1cm}
-\begin{center}\pill{Duas demonstrações conectadas · modelos locais · sem API comercial}\end{center}
+\begin{center}\pill{Duas demonstrações  · modelos locais em Português}\end{center}
 \end{frame}
 
 %3
-\begin{frame}{Por que este exemplo faz sentido para o Piauí?}
+\begin{frame}{Motivação}
 \begin{columns}[T]
 \column{.55\textwidth}
 {\large\bfseries Observação oficial recente}\par\vspace{.15cm}
-{\LARGE\color{petrol}\bfseries 100\%}\par
-Território do Piauí com alguma categoria de seca em \textbf{setembro de 2026}, segundo o Monitor de Secas.
-\vspace{0.30cm}
 {\fontsize{18}{22}\selectfont\color{danger}\bfseries 6\% $\to$ 25\%}\par
 Área com \textbf{seca grave} entre agosto e setembro de 2026.
 \column{.42\textwidth}
@@ -110,7 +107,7 @@ Território do Piauí com alguma categoria de seca em \textbf{setembro de 2026},
 \end{frame}
 
 %4
-\begin{frame}{CISUC: um ecossistema, não apenas uma técnica}
+\begin{frame}{CISUC: um ecossistema}
 \vspace{.08cm}
 {\small O CISUC organiza sua investigação em seis grupos. A IA atravessa vários deles.}
 \vspace{.18cm}
@@ -144,12 +141,12 @@ Território do Piauí com alguma categoria de seca em \textbf{setembro de 2026},
 \small Saúde, sistemas industriais, mobilidade, otimização e novas interfaces criativas.
 \end{columns}
 \vspace{.52cm}
-\begin{center}\large\bfseries A pergunta comum: \keyterm{como avaliamos o comportamento fora da demonstração?}\end{center}
+
 \smallsource{Projetos públicos CISUC: AMALIA; NextGenAI; MVAR (links no final).}
 \end{frame}
 
 %6
-\begin{frame}{A minha investigação: quatro perguntas fundamentais}
+\begin{frame}{A minha pesquisa: quatro perguntas fundamentais}
 \vspace{.07cm}
 \begin{columns}[T]
 \column{.48\textwidth}
@@ -177,6 +174,281 @@ Território do Piauí com alguma categoria de seca em \textbf{setembro de 2026},
 \column{.49\textwidth}\boxhead{Antes dos dados}{\small O \emph{prior predictive} diz o que as nossas hipóteses antecipam: $p(y)=\int p(y\mid\theta)p(\theta)d\theta$.}
 \column{.49\textwidth}\boxhead{Depois dos dados}{\small Uma probabilidade só ganha significado operacional quando relacionada ao custo do erro e à ação.}
 \end{columns}
+\end{frame}
+
+% ============================================================
+% FRAME 1 — Inserir após "Por que este exemplo faz sentido
+% para o Piauí?"
+% ============================================================
+
+\begin{frame}{Do problema real à inteligência artificial}
+
+\begin{block}{Um cenário de engenharia no Piauí}
+Uma rede de abastecimento de água possui sensores de pressão
+e vazão. Técnicos também registram ocorrências em linguagem
+natural. Os dados são incompletos e as inspeções têm custos.
+\end{block}
+
+\vspace{0.25cm}
+
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+\textbf{O que precisamos compreender?}
+
+\begin{itemize}
+    \item O que os sensores estão indicando?
+    \item Qual é a probabilidade de uma falha?
+    \item Quais informações estão faltando?
+    \item Quando devemos enviar uma equipe?
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Duas famílias de modelos}
+
+\begin{itemize}
+    \item \textbf{LLMs:} interpretar textos e extrair informações.
+    \item \textbf{Modelos probabilísticos:} representar
+    hipóteses e incertezas.
+    \item \textbf{Teoria da decisão:} escolher ações considerando
+    riscos e custos.
+\end{itemize}
+
+\end{columns}
+
+\vspace{0.35cm}
+
+\begin{center}
+\large
+\textbf{A ideia central:}
+\quad
+\textcolor{petrol}{Linguagem}
+$\;\longrightarrow\;$
+\textcolor{petrol}{Probabilidades}
+$\;\longrightarrow\;$
+\textcolor{petrol}{Decisões}
+\end{center}
+
+\end{frame}
+
+
+% ============================================================
+% FRAME 2 — Inserir antes do Exemplo A (modelo Bayesiano)
+% ============================================================
+
+\begin{frame}[allowframebreaks]{Probabilidade e decisão: duas perguntas diferentes}
+
+\textbf{1. Inferência: o que devemos acreditar após observar os dados?}
+
+\vspace{0.15cm}
+
+Se $F$ representa uma falha e $A$ representa um alarme,
+o teorema de Bayes nos permite atualizar nossa crença:
+
+\[
+\boxed{
+P(F\mid A)
+=
+\frac{P(A\mid F)P(F)}
+{P(A\mid F)P(F)+P(A\mid \neg F)P(\neg F)}
+}
+\]
+
+\begin{itemize}
+    \item $P(F)$: probabilidade de falha antes do alarme.
+    \item $P(A\mid F)$: chance de o alarme disparar quando há falha.
+    \item $P(F\mid A)$: probabilidade atualizada de falha.
+\end{itemize}
+
+\vspace{0.15cm}
+
+\textbf{2. Decisão: o que devemos fazer com essa probabilidade?}
+
+\[
+\boxed{
+a^*
+=
+\arg\min_{a}
+\mathbb{E}[L(a,F)\mid A]
+}
+\]
+
+\begin{exampleblock}{Exemplo: uma bomba com probabilidade de falha de 42\%}
+Suponha que uma inspeção custe R\$150 e evite completamente
+uma perda de R\$1.000 caso exista uma falha.
+
+\[
+\underbrace{150}_{\text{Inspecionar}}
+\quad < \quad
+\underbrace{0{,}42\times 1000}_{\text{Não inspecionar} = 420}
+\]
+
+\centering
+\textbf{Decisão ótima neste modelo: inspecionar.}
+\end{exampleblock}
+
+\end{frame}
+
+
+% ============================================================
+% FRAME 3 — Inserir antes da arquitetura do Exemplo B
+% ============================================================
+
+\begin{frame}[allowframebreaks]{Intuição: o que é um agente baseado em LLM?}
+
+\begin{block}{De um modelo de linguagem a um agente}
+Um LLM tradicional recebe uma entrada e produz uma resposta.
+
+Um \textbf{agente baseado em LLM} pode também escolher ações,
+utilizar ferramentas externas e modificar seu próximo passo
+com base nos resultados obtidos.
+\end{block}
+
+\vspace{0.2cm}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=0.35cm,
+    every node/.style={align=center}
+]
+
+\node[
+    draw=petrol,
+    rounded corners,
+    minimum width=2.1cm,
+    minimum height=0.9cm
+] (obs) {Observação\\\scriptsize Relatório técnico};
+
+\node[
+    draw=petrol,
+    rounded corners,
+    right=of obs,
+    minimum width=2.0cm,
+    minimum height=0.9cm
+] (llm) {LLM\\\scriptsize Escolhe o passo};
+
+\node[
+    draw=petrol,
+    rounded corners,
+    right=of llm,
+    minimum width=2.1cm,
+    minimum height=0.9cm
+] (tool) {Ferramenta\\\scriptsize Modelo Bayesiano};
+
+\node[
+    draw=petrol,
+    rounded corners,
+    right=of tool,
+    minimum width=2.1cm,
+    minimum height=0.9cm
+] (result) {Resultado\\\scriptsize Risco estimado};
+
+\draw[-{Latex}, thick] (obs) -- (llm);
+\draw[-{Latex}, thick] (llm) -- (tool);
+\draw[-{Latex}, thick] (tool) -- (result);
+
+\draw[
+    -{Latex},
+    dashed,
+    thick,
+    petrol
+]
+(result.south) -- ++(0,-0.45)
+-| (llm.south);
+
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.25cm}
+
+\textbf{Exemplo de execução:}
+
+\begin{enumerate}
+    \item O agente recebe: ``A bomba B-17 está com pressão baixa.''
+    \item O LLM extrai o identificador e a informação sobre o alarme.
+    \item O sistema valida os campos e chama uma ferramenta Bayesiana.
+    \item O agente apresenta o risco ou solicita dados adicionais.
+\end{enumerate}
+
+\vspace{0.15cm}
+
+\begin{alertblock}{Limitação importante}
+O LLM não deve inventar medições nem executar ações
+críticas sem validação. A decisão operacional deve respeitar
+regras explícitas e mecanismos de supervisão humana.
+\end{alertblock}
+
+\end{frame}
+
+
+% ============================================================
+% FRAME 4 — Inserir antes das integrações com Ollama/Hugging Face
+% ============================================================
+
+\begin{frame}[fragile]{LangChain: como construímos esse sistema?}
+
+\begin{block}{Intuição}
+LangChain é uma biblioteca para compor aplicações que utilizam
+modelos de linguagem, prompts, ferramentas e processamento
+de saídas.
+
+Ela permite trocar o modelo sem precisar reescrever
+toda a aplicação.
+\end{block}
+
+\begin{columns}[T]
+
+\column{0.58\textwidth}
+
+\begin{lstlisting}[language=Python]
+from langchain_core.prompts import (
+    ChatPromptTemplate
+)
+from langchain_core.output_parsers import (
+    PydanticOutputParser
+)
+
+parser = PydanticOutputParser(
+    pydantic_object=IncidentReport
+)
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Extraia apenas dados "
+               "explicitos.\n{formato}"),
+    ("human", "{relato}")
+])
+
+chain = prompt | modelo_local | parser
+\end{lstlisting}
+
+\column{0.38\textwidth}
+
+\textbf{O que cada componente faz?}
+
+\begin{itemize}
+    \item \textbf{Prompt:} especifica a tarefa.
+    \item \textbf{Modelo:} pode utilizar Ollama ou Hugging Face.
+    \item \textbf{Parser:} converte a resposta para um objeto tipado.
+    \item \textbf{Tools:} permitem executar funções Python externas.
+\end{itemize}
+
+\end{columns}
+
+\vspace{0.12cm}
+
+\begin{center}
+\small
+\textbf{No workshop:}
+Tucano2, Clinical-BR e AMALIA podem ser comparados
+utilizando a mesma interface.
+\end{center}
+
+{\scriptsize\color{grey}
+A validação sintática não garante fidelidade ao relato.
+Saídas inválidas devem ser tratadas explicitamente;
+valores extraídos precisam ser confrontados com a evidência.
+}
+
 \end{frame}
 
 %8
@@ -488,17 +760,14 @@ Alarmes dependentes & Confiança excessiva & Modelo conjunto e recalibração\\
 \end{frame}
 
 %21
-\begin{frame}{Ideias de projetos UC--UESPI: três níveis de investigação}
+\begin{frame}{Algumas ideias de potencial projetos colaborativos}
 \vspace{.14cm}
 \begin{columns}[T]
 \column{.31\textwidth}
-\boxhead{Água e infraestrutura}{\small\bfseries Diagnóstico probabilístico de anomalias\par\vspace{.10cm}Sensores, dados temporais, dependência em grafos, abstenção e decisão custo-sensível.\\\vspace{.15cm}\textbf{Métricas:} calibração, falhas perdidas, inspeções.}
+\boxhead{Água, Energia e infraestrutura}{\small\bfseries Diagnóstico probabilístico de anomalias\par\vspace{.10cm}Sensores, dados temporais, dependência em grafos, abstenção e decisão custo-sensível.\\\vspace{.15cm}\textbf{Métricas:} calibração, falhas perdidas, inspeções.}
 \column{.31\textwidth}
-\boxhead{Energia renovável}{\small\bfseries Previsão e operação de sistemas solares\par\vspace{.10cm}Variáveis meteorológicas, incerteza preditiva, detecção de desvios e decisão.\\\vspace{.15cm}\textbf{Métricas:} erro, cobertura, custo operacional.}
-\column{.31\textwidth}
-\boxhead{Português técnico / Math-PT}{\small\bfseries Extração e tutoria confiáveis\par\vspace{.10cm}Corpus de textos técnicos, raciocínio matemático, saídas estruturadas e verificação de solução.\\\vspace{.15cm}\textbf{Métricas:} acerto, citação, taxa de invenções.}
+\boxhead{Sistemas em Linguagem Natural}{\small\bfseries Extração e tutoria confiáveis\par\vspace{.10cm}Corpus de textos técnicos, raciocínio matemático, saídas estruturadas e verificação de solução.\\\vspace{.15cm}\textbf{Métricas:} acerto, citação, taxa de invenções.}
 \end{columns}
-\smallsource{Painel de renováveis SEPLAN-PI; projetos de língua portuguesa CISUC. Propostas para investigação, não projetos já aprovados.}
 \end{frame}
 
 %22
@@ -527,7 +796,7 @@ Alarmes dependentes & Confiança excessiva & Modelo conjunto e recalibração\\
 \begin{frame}{Discussão e próximos passos}
 \vspace{.35cm}
 \begin{center}
-{\Large\bfseries Que decisão importante para o Piauí pode ser melhorada por IA?}\\[.5cm]
+{\Large\bfseries Que processos decisórios que vocês conhecem acreditam que poder ser melhorado por um processo de IA?}\\[.5cm]
 {\large Que evidências seriam suficientes para confiarmos nela?}
 \end{center}
 \vspace{.55cm}
